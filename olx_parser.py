@@ -21,12 +21,25 @@ class OlxParser:
         self.print_result = print_result
 
     def handle(self) -> None:
+        """
+        Обработчик.
+        """
         self.get_cards()
         if self.card_data and self.print_result:
             pprint.pprint(self.card_data)
 
     @staticmethod
     def get_url(base_url, path: str = None, params: dict = None) -> str:
+        """
+        Формирует необходимый  url для запроса.
+        Args:
+            base_url: базовый url.
+            path: путь.
+            params: параметры запроса.
+
+        Returns:
+            подготовленный url.
+        """
         f_url = furl(url=base_url)
         if path:
             f_url.set(path=path)
@@ -35,6 +48,9 @@ class OlxParser:
         return f_url.url
 
     def get_cards(self) -> None:
+        """
+        Получает данные и записывает результат
+        """
         current_page = 0
         while len(self.card_data) < self.goods_count:
             current_page += 1
@@ -76,6 +92,14 @@ class OlxParser:
             logging.warning("Not all data received")
 
     def prepare_card_data(self, card: Tag) -> dict | None:
+        """
+        Подготавливает данные карточки товара.
+        Args:
+            card: Tag объект страницы.
+
+        Returns: словарь с данными.
+
+        """
         card_id = card.get("id")
         card_url = card.find("a")
         if card_url:
