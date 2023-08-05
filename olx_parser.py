@@ -2,6 +2,7 @@ import csv
 import datetime
 import logging
 import os
+import pprint
 import sys
 from http import HTTPStatus
 
@@ -14,12 +15,15 @@ class OlxParser:
     BASE_URL = "https://www.olx.pl"
     OFERTY_URL = "https://www.olx.pl/oferty/?search%5Border%5D=created_at:desc"
 
-    def __init__(self, goods_count: int = 200) -> None:
+    def __init__(self, goods_count: int = 200, print_result: bool = False) -> None:
         self.goods_count = goods_count
         self.card_data = []
+        self.print_result = print_result
 
     def handle(self) -> None:
         self.get_cards()
+        if self.card_data and self.print_result:
+            pprint.pprint(self.card_data)
 
     @staticmethod
     def get_url(base_url, path: str = None, params: dict = None) -> str:
@@ -132,4 +136,4 @@ if __name__ == "__main__":
         ]
     )
 
-    OlxParser().handle()
+    OlxParser(print_result=True).handle()
