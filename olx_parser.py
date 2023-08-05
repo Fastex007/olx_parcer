@@ -47,6 +47,19 @@ class OlxParser:
             f_url.add(args=params)
         return f_url.url
 
+    @staticmethod
+    def is_url(url: str) -> bool:
+        """
+        Проверяет является ли строка ссылкой.
+        Args:
+            url: вероятная ссылка
+
+        Returns:
+            признак того, является ли строка ссылкой или нет.
+        """
+
+        return furl(url=url).host
+
     def get_cards(self) -> None:
         """
         Получает данные и записывает результат
@@ -76,6 +89,7 @@ class OlxParser:
                 if data:
                     self.check_data(data=data)
                     self.card_data.append(data)
+                    logging.info(f"Amount collected data: {len(self.card_data)}, page: {current_page}")
         self.write_results()
 
     @staticmethod
@@ -103,10 +117,16 @@ class OlxParser:
         card_id = card.get("id")
         card_url = card.find("a")
         if card_url:
-            card_url = self.get_url(base_url=self.BASE_URL, path=card_url.get("href"))
+            card_url = card_url.get("href")
+            if not self.is_url(url=card_url):
+                card_url = self.get_url(base_url=self.BASE_URL, path=card_url)
         img_url = card.find("img")
+
         if img_url:
             img_url = img_url.get("src")
+            if not self.is_url(url=img_url):
+                return None
+
         name_price_div = card.find("div", class_="css-u2ayx9")
         if not name_price_div:
             return None
