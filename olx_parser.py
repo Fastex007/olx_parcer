@@ -135,7 +135,10 @@ class OlxParser:
             name = name.get_text()
         price = name_price_div.find("p", class_="css-10b0gli er34gjf0")
         if price:
-            price = price.get_text()
+            if price == "Zadarmo":
+                price = 0
+            else:
+                price = float(price.get_text().replace(" ", "").replace(",", ".").split("zł")[0])
         state = card.find("span", class_="css-3lkihg")
         if state:
             state = state.get_text()
@@ -146,6 +149,7 @@ class OlxParser:
             "img_url": img_url,
             "name": name,
             "price": price,
+            "currency_unit": "zł",
             "state": state,
         }
 
